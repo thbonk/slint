@@ -147,4 +147,5 @@ test('set struct properties', (t) => {
   });
 
   t.deepEqual(instance.getProperty("image"), new ImageData(0, 0));
+  instance.setProperty("image", new ImageData(0, 0));
 })

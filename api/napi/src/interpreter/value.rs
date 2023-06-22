@@ -75,6 +75,9 @@ pub fn to_value(env: &Env, unknown: JsUnknown, type_hint: ValueType) -> Result<V
         }
         ValueType::Image => {
             todo!()
+            // Value::Image(JsImageData::try_from(unknown).unwrap().image())
+            // println!(unknown.)
+            // Value::Image(env.unwrap::<JsImageData>(&unknown.coerce_to_object().unwrap()).unwrap().image())
         }
         ValueType::Model => {
             todo!("Instantiate a Rust type that implements Model<Value>, stores JsUnknown as JsObject and treats it as if it implements the Model<T> interface")
@@ -109,16 +112,17 @@ impl JsImageData {
         Self { internal: Image::from_rgba8(SharedPixelBuffer::new(width, height)) }
     }
 
-    #[napi(constructor)]
-    pub fn from_data_array(data_array: Buffer, width: u32) -> Self {
-        Self {
-            internal: Image::from_rgba8(SharedPixelBuffer::clone_from_slice(
-                data_array.as_ref(),
-                width,
-                width / data_array.len() as u32,
-            )),
-        }
-    }
+    // FIXME: constructor with buffer causes trouble
+    // #[napi(constructor)]
+    // pub fn from_data_array(data_array: Buffer, width: u32) -> Self {
+    //     Self {
+    //         internal: Image::from_rgba8(SharedPixelBuffer::clone_from_slice(
+    //             data_array.as_ref(),
+    //             width,
+    //             width / data_array.len() as u32,
+    //         )),
+    //     }
+    // }
 
     #[napi(getter)]
     pub fn width(&self) -> u32 {
@@ -144,7 +148,7 @@ impl JsImageData {
         Buffer::from(vec![0; (self.width() * self.height() * 4) as usize])
     }
 
-    pub(crate) fn to_image(self) -> Image {
-        self.internal
+    pub(crate) fn image(&self) -> Image {
+        self.internal.clone()
     }
 }
